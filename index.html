@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PRESCRIBE Architecture Explorer</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<div id="splash" class="splash" role="dialog" aria-labelledby="splash-title" aria-modal="true" hidden>
+  <div class="splash-card">
+    <div class="splash-eyebrow">Welcome to</div>
+    <h1 id="splash-title">PRESCRIBE Architecture Explorer</h1>
+    <p class="splash-tagline">Post-exercise Readiness &amp; Exercise-Sourced Competency Remediation, Informed By Evidence</p>
+
+    <p class="splash-body">
+      PRESCRIBE is a graduate capstone project exploring how to apply commercial data-platform patterns to post-exercise cyber readiness assessment. It ingests post-exercise artifacts from cyber EXEVALs (After Action Reports, evaluator scorecards, hot wash notes, range logs, scan output), AI-extracts behavior observations tagged to DCWF KSAs, computes per-operator competency gaps, and generates individualized remediation plans.
+    </p>
+    <p class="splash-body">
+      This site is the design tool, not the build itself. The actual capstone is implemented separately on a commercial data platform. The four tabs at the top each cover one architectural layer:
+    </p>
+
+    <ul class="splash-tabs">
+      <li><strong>Data processing.</strong> batch pipelines that read from S3 and external catalogs, parse heterogeneous formats, and write into the ontology.</li>
+      <li><strong>Ontology.</strong> The 19 object types and their relationships - what data PRESCRIBE works with at rest.</li>
+      <li><strong>AI Automate.</strong> The handful of AI Function that turn unstructured text into structured ontology rows. Each card opens a paste-ready prompt.</li>
+      <li><strong>Application.</strong> Sketches of the App views that consume the ontology - operator profile, mentor validation queue, CPT EXEVAL summary, and so on.</li>
+    </ul>
+
+    <div class="splash-warning">
+      <strong>All data shown is fictional.</strong> Sample callsigns, unit designators (e.g., <code>666th CPB</code>, <code>EXERCISE-DEMO</code>), IPs (<code>10.10.x.x</code>, <code>198.51.100.x</code>), and adversary domains (<code>c2.example.adversary</code>) are placeholder values used for design illustration. Not classified or operational.
+    </div>
+
+    <div class="splash-refs">
+      <div class="splash-refs-title">Public frameworks this design draws on</div>
+      <ul>
+        <li><a href="https://www.cyber.mil/dod-workforce-innovation-directorate/dod-cyber-workforce-framework" target="_blank" rel="noopener noreferrer">DoD Cyber Workforce Framework (DCWF)</a> - the competency spine</li>
+        <li><a href="https://www.nist.gov/itl/applied-cybersecurity/nice/nice-framework-resource-center" target="_blank" rel="noopener noreferrer">NIST NICE Framework</a> - cybersecurity workforce KSAs</li>
+        <li><a href="https://niccs.cisa.gov/training/catalog" target="_blank" rel="noopener noreferrer">NICCS Education &amp; Training Catalog (CISA)</a> - external course corpus</li>
+        <li><a href="https://www.cyber.mil/dod-workforce-innovation-directorate/dod8140/qualification-matrices" target="_blank" rel="noopener noreferrer">DoD 8140 Qualification Matrices</a> - work-role-tagged courses + certifications</li>
+        <li><a href="https://www.doctrine.af.mil/Portals/61/documents/AFDP_3-12/3-12-AFDP-CYBERSPACE-OPS.pdf" target="_blank" rel="noopener noreferrer">AFDP 3-12, Cyberspace Operations</a> - cyberspace doctrine</li>
+        <li><a href="https://attack.mitre.org/" target="_blank" rel="noopener noreferrer">MITRE ATT&amp;CK</a> - technique tagging reference</li>
+      </ul>
+    </div>
+
+    <button id="splash-enter" class="splash-enter" type="button">Enter the explorer</button>
+    <div class="splash-foot">
+      <label class="splash-remember">
+        <input type="checkbox" id="splash-remember-me" checked> Remember this and skip the intro next time
+      </label>
+    </div>
+  </div>
+</div>
+
+<header class="topbar">
+  <div class="title-block">
+    <h1>PRESCRIBE Architecture</h1>
+    <p class="subtitle">Post-exercise Readiness &amp; Exercise-Sourced Competency Remediation, Informed By Evidence</p>
+  </div>
+  <div class="zone-cards" role="tablist">
+    <button class="zone-card data" data-mode="data" role="tab" aria-selected="false" type="button">
+      <div class="zone-label">Data processing</div>
+      <div class="zone-detail">S3 → batch pipelines → seed datasets</div>
+    </button>
+    <button class="zone-card onto active" data-mode="ontology" role="tab" aria-selected="true" type="button">
+      <div class="zone-label">Ontology</div>
+      <div class="zone-detail">13 objects + 6 joins</div>
+    </button>
+    <button class="zone-card aip" data-mode="aip" role="tab" aria-selected="false" type="button">
+      <div class="zone-label">AI Automate</div>
+      <div class="zone-detail">Extract · compute gaps · remediate</div>
+    </button>
+    <button class="zone-card app" data-mode="app" role="tab" aria-selected="false" type="button">
+      <div class="zone-label">Application</div>
+      <div class="zone-detail">App: operator + commander</div>
+    </button>
+  </div>
+</header>
+
+<main class="layout">
+
+  <section class="diagram-pane">
+    <div class="toolbar">
+      <div class="legend">
+        <span>arrow → ownership (parent → child)</span>
+        <span>M:N via join object</span>
+        <span><code>PK</code> primary key</span>
+        <span><code>FK</code> foreign key</span>
+      </div>
+      <div class="legend-layers" role="group" aria-label="Filter by layer">
+        <button type="button" class="layer-chip all layer-chip-active" data-layer-filter="all" title="Show all layers (clear filter)">All</button>
+        <button type="button" class="layer-chip ref" data-layer-filter="reference" title="Highlight Reference-layer objects">Reference</button>
+        <button type="button" class="layer-chip obs" data-layer-filter="observed" title="Highlight Observed-layer objects">Observed</button>
+        <button type="button" class="layer-chip der" data-layer-filter="derived" title="Highlight Derived-layer objects">Derived</button>
+        <button type="button" class="layer-chip cont" data-layer-filter="continuity" title="Highlight Continuity-layer objects">Continuity</button>
+        <button type="button" class="layer-chip join" data-layer-filter="join" title="Highlight Join-layer objects">Join</button>
+      </div>
+      <div class="controls">
+        <button id="zoom-in" title="Zoom in">+</button>
+        <button id="zoom-out" title="Zoom out">−</button>
+        <button id="zoom-reset" title="Reset">⟲</button>
+      </div>
+    </div>
+    <div id="erd-viewport" class="erd-viewport">
+      <div id="erd"></div>
+    </div>
+    <div class="hint">Drag to pan · scroll to zoom · click any entity for details</div>
+  </section>
+
+  <div id="pane-splitter" class="pane-splitter" role="separator" aria-orientation="vertical" tabindex="0" title="Drag to resize"></div>
+
+  <aside id="detail-panel" class="detail-pane">
+    <div class="empty-state">
+      <h2>Click any entity</h2>
+      <p>Tap an entity in the diagram to see its layer, properties, relationships, and design notes here.</p>
+      <div class="quick-facts">
+        <div class="fact">
+          <div class="fact-label">Keystone object</div>
+          <div class="fact-value">Observation</div>
+          <div class="fact-note">Operator × KSA × Exercise, sourced from one ExerciseArtifact.</div>
+        </div>
+        <div class="fact">
+          <div class="fact-label">Spine</div>
+          <div class="fact-value">DCWF</div>
+          <div class="fact-note">ATT&amp;CK dropped as structural spine; technique tags appear as string properties only.</div>
+        </div>
+        <div class="fact">
+          <div class="fact-label">Audience</div>
+          <div class="fact-value">17 / 170 / 25D</div>
+          <div class="fact-note">Cyber operators whose readiness is measured through exercise performance.</div>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/svg-pan-zoom@3.6.1/dist/svg-pan-zoom.min.js"></script>
+<script src="erd-source.js"></script>
+<script src="entities.js"></script>
+<script src="automations.js"></script>
+<script src="mockups.js"></script>
+<script type="module" src="app.js"></script>
+
+</body>
+</html>
