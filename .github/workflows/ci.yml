@@ -115,7 +115,7 @@ jobs:
   pages-build-deploy:
     name: Build and Deploy to GitHub Pages
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-    needs: [validate]
+    needs: [validate, sast, secrets, sbom, grype]
     runs-on: ubuntu-latest
     permissions:
       contents: read
