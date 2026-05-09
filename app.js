@@ -1207,9 +1207,43 @@ function wireSplash() {
  });
 }
 
+// Show a one-time advisory on phones/tablets. The diagram is dense and the
+// detail pane stacks below it on narrow viewports - usable but not pretty.
+// Threshold matches the layout breakpoint in styles.css.
+function wireMobileWarning() {
+ const warn = document.getElementById("mobile-warning");
+ const continueBtn = document.getElementById("mobile-warning-continue");
+ const remember = document.getElementById("mobile-warning-remember");
+ if (!warn || !continueBtn) return;
+
+ const isNarrow = window.matchMedia("(max-width: 900px)").matches;
+ if (!isNarrow) return;
+
+ let dismissed = false;
+ try {
+ dismissed = localStorage.getItem("prescribe.mobileWarningDismissed") === "1";
+ } catch {}
+ if (dismissed) return;
+
+ warn.hidden = false;
+
+ continueBtn.addEventListener("click", () => {
+ if (remember && remember.checked) {
+ try { localStorage.setItem("prescribe.mobileWarningDismissed", "1"); } catch {}
+ }
+ warn.hidden = true;
+ if (panZoom) {
+ panZoom.resize();
+ panZoom.fit();
+ panZoom.center();
+ }
+ });
+}
+
 function bootstrap() {
  // Set initial body mode class so CSS animations have a hook on first load.
  document.body.classList.add("mode-" + currentMode);
+ wireMobileWarning();
  wireSplash();
  wireTabClicks();
  wireSplitter();
