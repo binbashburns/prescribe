@@ -8,6 +8,23 @@
 </head>
 <body>
 
+<div id="mobile-warning" class="mobile-warning" role="dialog" aria-labelledby="mobile-warning-title" aria-modal="true" hidden>
+  <div class="mobile-warning-card">
+    <div class="mobile-warning-eyebrow">Heads up</div>
+    <h1 id="mobile-warning-title">This explorer is built for desktop</h1>
+    <p>
+      PRESCRIBE renders a dense ontology diagram with pan/zoom, a side detail pane, and a top tab bar. On phones and small tablets the diagram is cramped, the splitter is hidden, and some interactions (drag-to-pan + scroll-to-zoom) fight the page scroll.
+    </p>
+    <p>
+      For the full experience open this on a laptop or larger screen. You can still continue here - tabs will scroll horizontally and the detail pane stacks below the diagram - but expect to do a lot of pinching and scrolling.
+    </p>
+    <button id="mobile-warning-continue" class="mobile-warning-continue" type="button">Continue anyway</button>
+    <label class="mobile-warning-remember">
+      <input type="checkbox" id="mobile-warning-remember" checked> Don't show this again on this device
+    </label>
+  </div>
+</div>
+
 <div id="splash" class="splash" role="dialog" aria-labelledby="splash-title" aria-modal="true" hidden>
   <div class="splash-card">
     <div class="splash-eyebrow">Welcome to</div>
